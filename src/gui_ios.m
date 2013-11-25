@@ -15,6 +15,7 @@
 
 #import "vim.h"
 #import <UIKit/UIKit.h>
+#import "VoiceVimViewController.h"
 
 #define RGB(r,g,b)	((r) << 16) + ((g) << 8) + (b)
 #define ARRAY_LENGTH(a) (sizeof(a) / sizeof(a[0]))
@@ -130,7 +131,7 @@ enum blink_state {
     self.view = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
     self.view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     
-    _textView = [[VimTextView alloc] initWithFrame:self.view.bounds];
+    _textView = [[VimTextView alloc] initWithFrame:CGRectMake(0.0f, 69.0f, 0.0f, 0.0f)];
     _textView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     [self.view addSubview:_textView];
     [_textView release];
@@ -266,13 +267,13 @@ enum blink_state {
 - (void)keyboardWasShown:(NSNotification *)notification {
     CGRect keyboardRect = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGRect keyboardRectInView = [self.view.window convertRect:keyboardRect toView:_textView];
-    _textView.frame = CGRectMake(0.0f, 0.0f, _textView.frame.size.width, keyboardRectInView.origin.y);
+    _textView.frame = CGRectMake(0.0f, 69.0f, _textView.frame.size.width, keyboardRectInView.origin.y);
 }
 
 - (void)keyboardWillBeHidden:(NSNotification *)notification {
     CGRect keyboardRect = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGRect keyboardRectInView = [self.view.window convertRect:keyboardRect toView:_textView];
-    _textView.frame = CGRectMake(0.0f, 0.0f, _textView.frame.size.width, keyboardRectInView.origin.y);
+    _textView.frame = CGRectMake(0.0f, 69.0f, _textView.frame.size.width, keyboardRectInView.origin.y);
 }
 
 - (void)resizeShell {
@@ -349,6 +350,44 @@ enum blink_state {
         [[NSFileManager defaultManager] changeCurrentDirectoryPath:[paths objectAtIndex:0]];
     }
 
+    char * argv[] = { "vim" };
+    VimMain(1, argv);
+}
+@end
+
+
+
+#pragma mark -
+#pragma mark VoiceVimAppDelegate
+
+@interface VoiceVimAppDelegate : NSObject <UIApplicationDelegate> {
+}
+@property (nonatomic, retain) IBOutlet UIWindow *window;
+@property (strong, nonatomic) VoiceVimViewController *viewController;
+@end
+
+@implementation VoiceVimAppDelegate
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    gui_ios.view_controller = [[VimViewController alloc] init];
+    self.viewController = [[VoiceVimViewController alloc] init];
+    self.window.rootViewController = gui_ios.view_controller;
+    [self.window makeKeyAndVisible];
+    [self performSelectorOnMainThread:@selector(_VoiceVimMain) withObject:nil waitUntilDone:NO];
+    return YES;
+}
+
+- (void)_VoiceVimMain {
+    NSString * vimPath = [[NSBundle mainBundle] resourcePath];
+    vim_setenv((char_u *)"VIM", (char_u *)[vimPath UTF8String]);
+    vim_setenv((char_u *)"VIMRUNTIME", (char_u *)[[vimPath stringByAppendingPathComponent:@"runtime"] UTF8String]);
+    
+    NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    if (paths.count > 0) {
+        vim_setenv((char_u *)"HOME", (char_u *)[[paths objectAtIndex:0] UTF8String]);
+        [[NSFileManager defaultManager] changeCurrentDirectoryPath:[paths objectAtIndex:0]];
+    }
+    
     char * argv[] = { "vim" };
     VimMain(1, argv);
 }

@@ -1,0 +1,29 @@
+#JSGF V1.0;
+grammar vimgrammar;
+public <userCmd> = <basicCmd> | <modeCmd> | <setCmd> | <moveCmd> | <editCmd> | <exitCmd>;
+
+<modeCmd> = <modeAction> <modeState>;
+<modeAction> = [ ENTER | SWITCH TO | START ];
+<modeState> = (INSERT | WRITTING | APPEND | EDIT | TEXT | COMMAND | ESCAPE | VISUAL | SELECT | HIGHLIGHTING | HIGHLIGHT) MODE*;
+
+<setCmd> = (SET | UNSET | TURN ON | TURN OFF | SHOW | HIDE | TOGGLE) <feature>;
+<feature> = KEYBOARD | LINE NUMBER | RULER | PASTE MODE;
+
+<moveCmd> = <moveAction> (<moveParamA> | <moveParamB>);
+<moveAction> = [ GO | MOVE ] [ TO | TO THE ];
+<moveParamA> = (NEXT | PREVIOUS | TOP | BOTTOM) [ OF | OF THE ] PAGE*;
+<moveParamB> = LINE NUMBER* <number>+;
+
+<editCmd> = <editAction> (<editParamA> | <editParamB> | <editParamC>);
+<editAction> = CUT | COPY | PASTE | REPEAT | DELETE | BACKSPACE | REMOVE;
+<editParamA> = [ THIS | THE | A ] [ LINE | WORD | CHARACTER | SENTENCE | PARAGRAPH ];
+<editParamB> = [ THIS | IT ] <number>+ TIMES;
+<editParamC> = <number>+ [ LINE | WORD | CHARACTER | SENTENCE | PARAGRAPH ];
+
+<exitCmd> = [ SAVE AND ] (EXIT | QUIT | GOODBYE | SHUT IT DOWN | CLOSE THE APP);
+
+<number> = <singleA> | <singleB> | <double>;
+<double> = <decade> <singleA>*;
+<decade> = TWENTY | THIRTY | FORTY | FIFTY | SIXTY | SEVENTY | EIGHTY | NINETY;
+<singleA> = ONE | TWO | THREE | FOUR | FIVE | SIX | SEVEN | EIGHT | NINE;
+<singleB> = TEN | ELEVEN | TWELVE | THIRTEEN | FOURTEEN | FIFTEEN | SIXTEEN | SEVENTEEN | EIGHTEEN | NINETEEN;
