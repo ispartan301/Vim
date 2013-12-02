@@ -15,7 +15,16 @@
 
 #import "vim.h"
 #import <UIKit/UIKit.h>
-#import "VoiceVimViewController.h"
+
+#import <Slt/Slt.h>
+#import <OpenEars/PocketsphinxController.h>
+#import <OpenEars/FliteController.h>
+#import <OpenEars/LanguageModelGenerator.h>
+#import <OpenEars/OpenEarsLogging.h>
+#import <OpenEars/AcousticModel.h>
+#import <OpenEars/OpenEarsEventsObserver.h>
+
+#import "CommandHandler.h"
 
 #define RGB(r,g,b)	((r) << 16) + ((g) << 8) + (b)
 #define ARRAY_LENGTH(a) (sizeof(a) / sizeof(a[0]))
@@ -46,12 +55,18 @@ struct {
     long       blink_on;
     long       blink_off;
     NSTimer *  blink_timer;
+    int        vim_state;
 } gui_ios;
 
 enum blink_state {
     BLINK_NONE,     /* not blinking at all */
     BLINK_OFF,      /* blinking, cursor is not shown */
     BLINK_ON        /* blinking, cursor is shown */
+};
+
+enum vim_state {
+    TEXT,
+    COMMAND
 };
 
 #pragma mark -
@@ -85,6 +100,7 @@ enum blink_state {
         }
     } else {
         gui_ios.layer = CGLayerCreateWithContext(UIGraphicsGetCurrentContext(), CGSizeMake(1024.0f, 1024.0f), nil);
+        gui_ios.vim_state = COMMAND;
     }
 }
 
@@ -100,16 +116,279 @@ enum blink_state {
 @end
 
 #pragma mark -
+#pragma VoiceVimViewController
+
+@interface VoiceVimViewController : UIViewController <OpenEarsEventsObserverDelegate> {
+	Slt *slt;
+	OpenEarsEventsObserver *openEarsEventsObserver;
+	PocketsphinxController *pocketsphinxController;
+	FliteController *fliteController;
+    CommandHandler *cmdHandler;
+    NSString *pathToGrammarToStartAppWith;
+	NSString *pathToDictionaryToStartAppWith;
+}
+@property (nonatomic, strong) Slt *slt;
+@property (nonatomic, strong) OpenEarsEventsObserver *openEarsEventsObserver;
+@property (nonatomic, strong) PocketsphinxController *pocketsphinxController;
+@property (nonatomic, strong) FliteController *fliteController;
+@property (nonatomic, strong) CommandHandler *cmdHandler;
+@property (nonatomic, copy) NSString *pathToGrammarToStartAppWith;
+@property (nonatomic, copy) NSString *pathToDictionaryToStartAppWith;
+@property (nonatomic, strong) IBOutlet UINavigationItem * navTitle;
+@property (nonatomic, strong) IBOutlet UISwitch * voiceSwitch;
+@end
+
+@implementation VoiceVimViewController
+
+@synthesize slt;
+@synthesize openEarsEventsObserver;
+@synthesize pocketsphinxController;
+@synthesize fliteController;
+@synthesize cmdHandler;
+@synthesize pathToGrammarToStartAppWith;
+@synthesize pathToDictionaryToStartAppWith;
+
+#pragma mark -
+#pragma mark Memory Management
+
+- (void)dealloc {
+	openEarsEventsObserver.delegate = nil;
+    [super dealloc];
+}
+
+#pragma mark -
+#pragma mark Lazy Allocation
+
+// Lazily allocated PocketsphinxController.
+- (PocketsphinxController *)pocketsphinxController {
+	if (pocketsphinxController == nil) {
+		pocketsphinxController = [[PocketsphinxController alloc] init];
+        pocketsphinxController.outputAudio = TRUE;
+#ifdef kGetNbest
+        pocketsphinxController.returnNbest = TRUE;
+        pocketsphinxController.nBestNumber = 5;
+#endif
+	}
+	return pocketsphinxController;
+}
+
+// Lazily allocated slt voice.
+- (Slt *)slt {
+	if (slt == nil) {
+		slt = [[Slt alloc] init];
+	}
+	return slt;
+}
+
+// Lazily allocated FliteController.
+- (FliteController *)fliteController {
+	if (fliteController == nil) {
+		fliteController = [[FliteController alloc] init];
+        
+	}
+	return fliteController;
+}
+
+// Lazily allocated OpenEarsEventsObserver.
+- (OpenEarsEventsObserver *)openEarsEventsObserver {
+	if (openEarsEventsObserver == nil) {
+		openEarsEventsObserver = [[OpenEarsEventsObserver alloc] init];
+	}
+	return openEarsEventsObserver;
+}
+
+- (void) startListening {
+    [self.pocketsphinxController startListeningWithLanguageModelAtPath:self.pathToGrammarToStartAppWith dictionaryAtPath:self.pathToDictionaryToStartAppWith acousticModelAtPath:[AcousticModel pathToModel:@"AcousticModelEnglish"] languageModelIsJSGF:TRUE];
+}
+
+#pragma mark -
+#pragma mark OpenEarsEventsObserver delegate methods
+
+- (void) pocketsphinxDidReceiveHypothesis:(NSString *)hypothesis recognitionScore:(NSString *)recognitionScore utteranceID:(NSString *)utteranceID {
+    
+	NSLog(@"The received hypothesis is %@ with a score of %@ and an ID of %@", hypothesis, recognitionScore, utteranceID); // Log it.
+
+    NSString *reco = [self.cmdHandler normalize:hypothesis];
+    NSLog(@"DEBUG: reco = %@", reco);
+    
+    if (reco != NULL) {
+        [self.navTitle setTitle:reco];
+        [self.fliteController say:reco withVoice:self.slt];
+        NSString *cmd = [self.cmdHandler get:reco];
+        NSLog(@"DEBUG: cmd = %@", cmd);
+        if (gui_ios.vim_state == COMMAND) {
+            if ([reco isEqualToString:@"insert"]) {
+                [gui_ios.view_controller becomeFirstResponder];
+                gui_ios.vim_state = TEXT;
+            }
+            [gui_ios.view_controller insertText:cmd];
+        } else {
+            if ([reco isEqualToString:@"escape"]) {
+                [gui_ios.view_controller insertText:cmd];
+                gui_ios.vim_state = COMMAND;
+            }
+        }
+    }
+}
+
+#ifdef kGetNbest
+- (void) pocketsphinxDidReceiveNBestHypothesisArray:(NSArray *)hypothesisArray {
+    NSLog(@"hypothesisArray is %@",hypothesisArray);
+}
+#endif
+
+- (void) audioSessionInterruptionDidBegin {
+	NSLog(@"AudioSession interruption began.");
+	[self.pocketsphinxController stopListening];
+}
+
+- (void) audioSessionInterruptionDidEnd {
+	NSLog(@"AudioSession interruption ended.");
+    [self startListening];
+	
+}
+
+- (void) audioInputDidBecomeUnavailable {
+	NSLog(@"The audio input has become unavailable");
+	[self.pocketsphinxController stopListening];
+}
+
+- (void) audioInputDidBecomeAvailable {
+	NSLog(@"The audio input is available");
+    [self startListening];
+}
+
+- (void) audioRouteDidChangeToRoute:(NSString *)newRoute {
+	NSLog(@"Audio route change. The new audio route is %@", newRoute);
+	[self.pocketsphinxController stopListening];
+    [self startListening];
+}
+
+- (void) pocketsphinxDidStartCalibration {
+	NSLog(@"Pocketsphinx calibration has started.");
+}
+
+- (void) pocketsphinxDidCompleteCalibration {
+	NSLog(@"Pocketsphinx calibration is complete.");
+    
+	self.fliteController.duration_stretch = .9; // Change the speed
+	self.fliteController.target_mean = 1.2; // Change the pitch
+	self.fliteController.target_stddev = 1.5; // Change the variance
+	
+    [self.fliteController say:@"VoiceVim now listening" withVoice:self.slt];
+    // The same statement with the pitch and other voice values changed.
+	
+	self.fliteController.duration_stretch = 1.0; // Reset the speed
+	self.fliteController.target_mean = 1.0; // Reset the pitch
+	self.fliteController.target_stddev = 1.0; // Reset the variance
+    [self.navTitle setTitle:@"VoiceVim now listening"];
+    [self.voiceSwitch setOn:TRUE];
+}
+
+- (void) pocketsphinxRecognitionLoopDidStart {
+	NSLog(@"Pocketsphinx is starting up.");
+}
+
+- (void) pocketsphinxDidStartListening {
+	NSLog(@"Pocketsphinx is now listening.");
+}
+
+- (void) pocketsphinxDidDetectSpeech {
+	NSLog(@"Pocketsphinx has detected speech.");
+    [self.navTitle setTitle:@"VoiceVim detected something..."];
+}
+
+- (void) pocketsphinxDidDetectFinishedSpeech {
+	NSLog(@"Pocketsphinx has detected a second of silence, concluding an utterance.");
+    [self.navTitle setTitle:@"VoiceVim now processing..."];
+}
+
+- (void) pocketsphinxDidStopListening {
+	NSLog(@"Pocketsphinx has stopped listening.");
+    [self.navTitle setTitle:@"VoiceVim stop listening"];
+}
+
+- (void) pocketsphinxDidSuspendRecognition {
+	NSLog(@"Pocketsphinx has suspended recognition.");
+}
+
+- (void) pocketsphinxDidResumeRecognition {
+	NSLog(@"Pocketsphinx has resumed recognition.");
+}
+
+- (void) pocketsphinxDidChangeLanguageModelToFile:(NSString *)newLanguageModelPathAsString andDictionary:(NSString *)newDictionaryPathAsString {
+	NSLog(@"Pocketsphinx is now using the following language model: \n%@ and the following dictionary: %@",newLanguageModelPathAsString,newDictionaryPathAsString);
+}
+
+- (void) fliteDidStartSpeaking {
+	NSLog(@"Flite has started speaking");
+}
+
+- (void) fliteDidFinishSpeaking {
+	NSLog(@"Flite has finished speaking");
+}
+
+- (void) pocketSphinxContinuousSetupDidFail {
+	NSLog(@"Setting up the continuous recognition loop has failed for some reason, please turn on [OpenEarsLogging startOpenEarsLogging] in OpenEarsConfig.h to learn more.");
+}
+
+- (void) shutDown {
+    NSLog(@"Hi I'm on thread %@",[NSThread currentThread]);
+}
+
+- (void) testRecognitionCompleted {
+	NSLog(@"A test file which was submitted for direct recognition via the audio driver is done.");
+    [self.pocketsphinxController stopListening];
+
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self.navTitle setTitle:@"VoiceVim initializing..."];
+    [self.voiceSwitch setOn:FALSE];
+    [self.voiceSwitch addTarget: self action: @selector(flip:) forControlEvents:UIControlEventValueChanged];
+    self.cmdHandler = [[CommandHandler alloc] init];
+
+    [self.openEarsEventsObserver setDelegate:self];
+    self.pathToGrammarToStartAppWith = [NSString stringWithFormat:@"%@/%@",[[NSBundle mainBundle] resourcePath], @"vim.gram"];
+    self.pathToDictionaryToStartAppWith = [NSString stringWithFormat:@"%@/%@",[[NSBundle mainBundle] resourcePath], @"vim.dic"];
+    [self startListening];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+}
+
+- (IBAction)flip:(id)sender {
+    if(self.voiceSwitch.on) {
+        NSLog(@"DEBUG: Switching Voice On");
+        [self.navTitle setTitle:@"VoiceVim initialing..."];
+        [self startListening];
+    } else {
+        NSLog(@"DEBUG: Switching Voice Off");
+        [self.navTitle setTitle:@"VoiceVim turning off..."];
+        [self.fliteController say:@"VoiceVim turning off" withVoice:self.slt];
+        [self.pocketsphinxController stopListening];
+    }
+}
+
+@end
+
+#pragma mark -
 #pragma VimViewController
 
 @interface VimViewController : UIViewController <UIKeyInput, UITextInputTraits> {
     VimTextView * _textView;
     BOOL _hasBeenFlushedOnce;
 }
-@property (nonatomic, readonly) VimTextView * textView;
+@property (nonatomic, readonly) IBOutlet VimTextView * textView;
+@property (nonatomic, strong) IBOutlet VoiceVimViewController * vvController;
 - (void)resizeShell;
 - (void)flush;
 - (void)blinkCursorTimer:(NSTimer *)timer;
+- (void)insertText:(NSString *)text;
 @end
 
 @implementation VimViewController
@@ -130,12 +409,12 @@ enum blink_state {
 - (void)loadView {
     self.view = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
     self.view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-    
-    _textView = [[VimTextView alloc] initWithFrame:CGRectMake(0.0f, 69.0f, 0.0f, 0.0f)];
+    _textView = [[VimTextView alloc] initWithFrame:CGRectMake(0.0f, 64.0f, 0.0f, 0.0f)];
     _textView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     [self.view addSubview:_textView];
     [_textView release];
-
+    self.vvController = [[VoiceVimViewController alloc] initWithNibName:@"VoiceVimViewController" bundle:nil];
+    [self.view addSubview:self.vvController.view];
     _hasBeenFlushedOnce = NO;
 }
 
@@ -267,13 +546,13 @@ enum blink_state {
 - (void)keyboardWasShown:(NSNotification *)notification {
     CGRect keyboardRect = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGRect keyboardRectInView = [self.view.window convertRect:keyboardRect toView:_textView];
-    _textView.frame = CGRectMake(0.0f, 69.0f, _textView.frame.size.width, keyboardRectInView.origin.y);
+    _textView.frame = CGRectMake(0.0f, 64.0f, _textView.frame.size.width, keyboardRectInView.origin.y);
 }
 
 - (void)keyboardWillBeHidden:(NSNotification *)notification {
     CGRect keyboardRect = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGRect keyboardRectInView = [self.view.window convertRect:keyboardRect toView:_textView];
-    _textView.frame = CGRectMake(0.0f, 69.0f, _textView.frame.size.width, keyboardRectInView.origin.y);
+    _textView.frame = CGRectMake(0.0f, 64.0f, _textView.frame.size.width, keyboardRectInView.origin.y);
 }
 
 - (void)resizeShell {
@@ -287,7 +566,7 @@ enum blink_state {
 
 - (void)blinkCursorTimer:(NSTimer *)timer {
     NSTimeInterval on_time, off_time;
-    
+
     
     [gui_ios.blink_timer invalidate];
     if (gui_ios.blink_state == BLINK_ON) {
@@ -363,14 +642,13 @@ enum blink_state {
 @interface VoiceVimAppDelegate : NSObject <UIApplicationDelegate> {
 }
 @property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (strong, nonatomic) VoiceVimViewController *viewController;
+@property (nonatomic, retain) IBOutlet VoiceVimViewController *viewController;
 @end
 
 @implementation VoiceVimAppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     gui_ios.view_controller = [[VimViewController alloc] init];
-    self.viewController = [[VoiceVimViewController alloc] init];
     self.window.rootViewController = gui_ios.view_controller;
     [self.window makeKeyAndVisible];
     [self performSelectorOnMainThread:@selector(_VoiceVimMain) withObject:nil waitUntilDone:NO];
@@ -428,7 +706,7 @@ CGColorRef CGColorCreateFromVimColor(guicolor_T color) {
 
 int main(int argc, char *argv[]) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    int retVal = UIApplicationMain(argc, argv, nil, @"VimAppDelegate");
+    int retVal = UIApplicationMain(argc, argv, nil, @"VoiceVimAppDelegate");
     [pool release];
     return retVal;
 }

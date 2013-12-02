@@ -1,13 +1,16 @@
 #JSGF V1.0;
 grammar vimgrammar;
-public <userCmd> = <basicCmd> | <modeCmd> | <setCmd> | <moveCmd> | <editCmd> | <exitCmd>;
+public <userCmd> = <speChar> | <basicCmd> | <modeCmd> | <setCmd> | <moveCmd> | <editCmd> | <exitCmd>;
+
+<speChar> = COLON | DOLLOR | PERCENT | SLASH | BACKSLASH | CARET | EXCLAMATION;
+<basicCmd> = INSERT | ESCAPE | TOP | BOTTOM | VISUAL | SET | COPY | PASTE | CUT | SEARCH | REPLACE | EDIT | HELP | UNDO | REDO | NEXT | PREVIOUS | LEFT | RIGHT | UP | DOWN | SAVE | EXIT;
 
 <modeCmd> = <modeAction> <modeState>;
 <modeAction> = [ ENTER | SWITCH TO | START ];
 <modeState> = (INSERT | WRITTING | APPEND | EDIT | TEXT | COMMAND | ESCAPE | VISUAL | SELECT | HIGHLIGHTING | HIGHLIGHT) MODE*;
 
 <setCmd> = (SET | UNSET | TURN ON | TURN OFF | SHOW | HIDE | TOGGLE) <feature>;
-<feature> = KEYBOARD | LINE NUMBER | RULER | PASTE MODE;
+<feature> = KEYBOARD | LINE NUMBER | RULER | PASTE MODE | IGNORE CASE;
 
 <moveCmd> = <moveAction> (<moveParamA> | <moveParamB>);
 <moveAction> = [ GO | MOVE ] [ TO | TO THE ];

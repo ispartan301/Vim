@@ -69,15 +69,14 @@
 		7A8CAA2E147FCFC900908FBE /* VimIcon114.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A8CAA2B147FCFC900908FBE /* VimIcon114.png */; };
 		7A9DD4E5142CC10600B8F464 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A9DD4E4142CC10600B8F464 /* CoreText.framework */; };
 		7AD12B23169ACF73005BBE2E /* default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7AD12B22169ACF73005BBE2E /* default-568h@2x.png */; };
-		95E7A102184174900063B0DA /* VoiceVimPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 95E7A101184174900063B0DA /* VoiceVimPhone.xib */; };
+		95A2DDC3184BD653007CE559 /* VoiceVimViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 95A2DDC2184BD653007CE559 /* VoiceVimViewController.xib */; };
+		95A2DDC6184C4826007CE559 /* CommandHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 95A2DDC5184C4826007CE559 /* CommandHandler.m */; };
 		95E7A10B1841861C0063B0DA /* AcousticModelEnglish.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 95E7A1041841861C0063B0DA /* AcousticModelEnglish.bundle */; };
 		95E7A10C1841861C0063B0DA /* OpenEars.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E7A1051841861C0063B0DA /* OpenEars.framework */; };
 		95E7A10D1841861C0063B0DA /* Slt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E7A1061841861C0063B0DA /* Slt.framework */; };
 		95E7A10E1841861C0063B0DA /* vim.dic in Resources */ = {isa = PBXBuildFile; fileRef = 95E7A1071841861C0063B0DA /* vim.dic */; };
 		95E7A10F1841861C0063B0DA /* vim.gram in Resources */ = {isa = PBXBuildFile; fileRef = 95E7A1081841861C0063B0DA /* vim.gram */; };
 		95E7A1101841861C0063B0DA /* vim.txt in Resources */ = {isa = PBXBuildFile; fileRef = 95E7A1091841861C0063B0DA /* vim.txt */; };
-		95E7A1111841861C0063B0DA /* vim2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 95E7A10A1841861C0063B0DA /* vim2.txt */; };
-		95E7A114184188AB0063B0DA /* VoiceVimViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 95E7A113184188AB0063B0DA /* VoiceVimViewController.m */; };
 		95E7A1161841BBAD0063B0DA /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E7A1151841BBAD0063B0DA /* AudioToolbox.framework */; };
 		95E7A1181841BBB40063B0DA /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E7A1171841BBB40063B0DA /* AVFoundation.framework */; };
 /* End PBXBuildFile section */
@@ -637,16 +636,15 @@
 		7AD12B22169ACF73005BBE2E /* default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "default-568h@2x.png"; sourceTree = "<group>"; };
 		7AE20BB2142B8D7E00848B40 /* ios_info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ios_info.plist; sourceTree = "<group>"; };
 		7AE20BB3142B8D7E00848B40 /* ios_prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ios_prefix.pch; sourceTree = "<group>"; };
-		95E7A101184174900063B0DA /* VoiceVimPhone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VoiceVimPhone.xib; sourceTree = "<group>"; };
+		95A2DDC2184BD653007CE559 /* VoiceVimViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VoiceVimViewController.xib; sourceTree = "<group>"; };
+		95A2DDC4184C4826007CE559 /* CommandHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandHandler.h; sourceTree = "<group>"; };
+		95A2DDC5184C4826007CE559 /* CommandHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommandHandler.m; sourceTree = "<group>"; };
 		95E7A1041841861C0063B0DA /* AcousticModelEnglish.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AcousticModelEnglish.bundle; sourceTree = "<group>"; };
 		95E7A1051841861C0063B0DA /* OpenEars.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = OpenEars.framework; sourceTree = "<group>"; };
 		95E7A1061841861C0063B0DA /* Slt.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Slt.framework; sourceTree = "<group>"; };
 		95E7A1071841861C0063B0DA /* vim.dic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vim.dic; sourceTree = "<group>"; };
 		95E7A1081841861C0063B0DA /* vim.gram */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vim.gram; sourceTree = "<group>"; };
 		95E7A1091841861C0063B0DA /* vim.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vim.txt; sourceTree = "<group>"; };
-		95E7A10A1841861C0063B0DA /* vim2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vim2.txt; sourceTree = "<group>"; };
-		95E7A112184188AB0063B0DA /* VoiceVimViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceVimViewController.h; sourceTree = "<group>"; };
-		95E7A113184188AB0063B0DA /* VoiceVimViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceVimViewController.m; sourceTree = "<group>"; };
 		95E7A1151841BBAD0063B0DA /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		95E7A1171841BBB40063B0DA /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -914,8 +912,9 @@
 				7A992DF51422933000075221 /* xpm_w32.c */,
 				7A992DF61422933000075221 /* xpm_w32.h */,
 				7A992DF71422933000075221 /* xxd */,
-				95E7A112184188AB0063B0DA /* VoiceVimViewController.h */,
-				95E7A113184188AB0063B0DA /* VoiceVimViewController.m */,
+				95A2DDC2184BD653007CE559 /* VoiceVimViewController.xib */,
+				95A2DDC4184C4826007CE559 /* CommandHandler.h */,
+				95A2DDC5184C4826007CE559 /* CommandHandler.m */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1345,7 +1344,6 @@
 				7A8CAA1D147FA3D100908FBE /* vimrc */,
 				7AE20BB2142B8D7E00848B40 /* ios_info.plist */,
 				7AE20BB3142B8D7E00848B40 /* ios_prefix.pch */,
-				95E7A101184174900063B0DA /* VoiceVimPhone.xib */,
 			);
 			path = os_ios_rsrc;
 			sourceTree = "<group>";
@@ -1359,7 +1357,6 @@
 				95E7A1071841861C0063B0DA /* vim.dic */,
 				95E7A1081841861C0063B0DA /* vim.gram */,
 				95E7A1091841861C0063B0DA /* vim.txt */,
-				95E7A10A1841861C0063B0DA /* vim2.txt */,
 			);
 			path = VoiceVim;
 			sourceTree = "<group>";
@@ -1391,6 +1388,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0420;
+				TargetAttributes = {
+					7A71941314228FA500B62000 = {
+						DevelopmentTeam = R36YRTXSZJ;
+					};
+				};
 			};
 			buildConfigurationList = 7A71940E14228FA500B62000 /* Build configuration list for PBXProject "VoiceVim" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1414,11 +1416,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95A2DDC3184BD653007CE559 /* VoiceVimViewController.xib in Resources */,
 				95E7A1101841861C0063B0DA /* vim.txt in Resources */,
-				95E7A102184174900063B0DA /* VoiceVimPhone.xib in Resources */,
 				95E7A10B1841861C0063B0DA /* AcousticModelEnglish.bundle in Resources */,
 				7A8CAA27147FAC1600908FBE /* runtime in Resources */,
-				95E7A1111841861C0063B0DA /* vim2.txt in Resources */,
 				7A8CAA28147FAC2E00908FBE /* vimrc in Resources */,
 				7A8CAA2C147FCFC900908FBE /* VimIcon57.png in Resources */,
 				7A8CAA2D147FCFC900908FBE /* VimIcon72.png in Resources */,
@@ -1449,11 +1450,11 @@
 				7A68CB0214229E440019E159 /* regexp.c in Sources */,
 				7A68CB0314229E440019E159 /* screen.c in Sources */,
 				7A68CB0414229E440019E159 /* search.c in Sources */,
-				95E7A114184188AB0063B0DA /* VoiceVimViewController.m in Sources */,
 				7A68CB0514229E440019E159 /* sha256.c in Sources */,
 				7A68CB0614229E440019E159 /* spell.c in Sources */,
 				7A68CB0714229E440019E159 /* syntax.c in Sources */,
 				7A68CB0814229E440019E159 /* tag.c in Sources */,
+				95A2DDC6184C4826007CE559 /* CommandHandler.m in Sources */,
 				7A68CB0914229E440019E159 /* term.c in Sources */,
 				7A68CB0A14229E440019E159 /* ui.c in Sources */,
 				7A68CB0B14229E440019E159 /* undo.c in Sources */,
@@ -1540,6 +1541,7 @@
 		7A71943B14228FA500B62000 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/victorl/mnt/work/Vim/VoiceVim,
@@ -1553,7 +1555,8 @@
 				INFOPLIST_FILE = src/os_ios_rsrc/ios_info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = VoiceVim;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				PROVISIONING_PROFILE = "82BE7FC2-9375-4063-98BE-F694C03908E4";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1561,6 +1564,7 @@
 		7A71943C14228FA500B62000 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/victorl/mnt/work/Vim/VoiceVim,
@@ -1574,7 +1578,8 @@
 				INFOPLIST_FILE = src/os_ios_rsrc/ios_info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = VoiceVim;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				PROVISIONING_PROFILE = "82BE7FC2-9375-4063-98BE-F694C03908E4";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

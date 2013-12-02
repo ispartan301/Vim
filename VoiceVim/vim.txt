@@ -325,3 +325,11 @@ goodbye
 byebye
 quit now
 exit
+percent
+dollor
+colon
+help
+find
+caret
+exclamation mark
+substitute
