@@ -333,3 +333,5 @@ find
 caret
 exclamation mark
 substitute
+sample script
+sample file

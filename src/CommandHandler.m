@@ -35,16 +35,19 @@
         @"right" : @"l",
         @"up" : @"k",
         @"down" : @"j",
+        @"open" : @":o ",
         @"save" : @":w ",
         @"exit" : @":q\r",
         @"set paste" : @":set paste\r",
         @"set no paste" : @":set nopaste\r",
-        @"set ignore case" : @"set ic\r",
-        @"set no ignore case" : @"set noic\r",
+        @"set ignore case" : @":set ic\r",
+        @"set no ignore case" : @":set noic\r",
         @"set number" : @":set nu\r",
         @"set no number" : @":set nonu\r",
         @"set ruler" : @":set ruler\r",
-        @"set no ruler" : @":set noruler\r"
+        @"set no ruler" : @":set noruler\r",
+        @"open sample script" : @":o ../VoiceVim.app/sample.pl\r",
+        @"open sample text" : @":o ../VoiceVim.app/sample.txt\r",
     };
     return self;
 }

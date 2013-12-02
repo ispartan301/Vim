@@ -1,9 +1,11 @@
 #JSGF V1.0;
 grammar vimgrammar;
-public <userCmd> = <speChar> | <basicCmd> | <modeCmd> | <setCmd> | <moveCmd> | <editCmd> | <exitCmd>;
+public <userCmd> = <speChar> | <basicCmd> | <sampleCmd> | <modeCmd> | <setCmd> | <moveCmd> | <editCmd> | <exitCmd>;
 
 <speChar> = COLON | DOLLOR | PERCENT | SLASH | BACKSLASH | CARET | EXCLAMATION;
-<basicCmd> = INSERT | ESCAPE | TOP | BOTTOM | VISUAL | SET | COPY | PASTE | CUT | SEARCH | REPLACE | EDIT | HELP | UNDO | REDO | NEXT | PREVIOUS | LEFT | RIGHT | UP | DOWN | SAVE | EXIT;
+<basicCmd> = INSERT | ESCAPE | TOP | BOTTOM | VISUAL | SET | COPY | PASTE | CUT | SEARCH | REPLACE | EDIT | HELP | UNDO | REDO | NEXT | PREVIOUS | LEFT | RIGHT | UP | DOWN | SAVE | EXIT | OPEN;
+
+<sampleCmd> = OPEN SAMPLE (SCRIPT | TEXT);
 
 <modeCmd> = <modeAction> <modeState>;
 <modeAction> = [ ENTER | SWITCH TO | START ];

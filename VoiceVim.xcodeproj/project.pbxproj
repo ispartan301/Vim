@@ -71,6 +71,8 @@
 		7AD12B23169ACF73005BBE2E /* default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7AD12B22169ACF73005BBE2E /* default-568h@2x.png */; };
 		95A2DDC3184BD653007CE559 /* VoiceVimViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 95A2DDC2184BD653007CE559 /* VoiceVimViewController.xib */; };
 		95A2DDC6184C4826007CE559 /* CommandHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 95A2DDC5184C4826007CE559 /* CommandHandler.m */; };
+		95A2DDC9184C9D68007CE559 /* sample.pl in Resources */ = {isa = PBXBuildFile; fileRef = 95A2DDC8184C9D68007CE559 /* sample.pl */; };
+		95A2DDCB184C9D76007CE559 /* sample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 95A2DDCA184C9D76007CE559 /* sample.txt */; };
 		95E7A10B1841861C0063B0DA /* AcousticModelEnglish.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 95E7A1041841861C0063B0DA /* AcousticModelEnglish.bundle */; };
 		95E7A10C1841861C0063B0DA /* OpenEars.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E7A1051841861C0063B0DA /* OpenEars.framework */; };
 		95E7A10D1841861C0063B0DA /* Slt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E7A1061841861C0063B0DA /* Slt.framework */; };
@@ -639,6 +641,8 @@
 		95A2DDC2184BD653007CE559 /* VoiceVimViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VoiceVimViewController.xib; sourceTree = "<group>"; };
 		95A2DDC4184C4826007CE559 /* CommandHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandHandler.h; sourceTree = "<group>"; };
 		95A2DDC5184C4826007CE559 /* CommandHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommandHandler.m; sourceTree = "<group>"; };
+		95A2DDC8184C9D68007CE559 /* sample.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = sample.pl; sourceTree = "<group>"; };
+		95A2DDCA184C9D76007CE559 /* sample.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sample.txt; sourceTree = "<group>"; };
 		95E7A1041841861C0063B0DA /* AcousticModelEnglish.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AcousticModelEnglish.bundle; sourceTree = "<group>"; };
 		95E7A1051841861C0063B0DA /* OpenEars.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = OpenEars.framework; sourceTree = "<group>"; };
 		95E7A1061841861C0063B0DA /* Slt.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Slt.framework; sourceTree = "<group>"; };
@@ -1344,6 +1348,8 @@
 				7A8CAA1D147FA3D100908FBE /* vimrc */,
 				7AE20BB2142B8D7E00848B40 /* ios_info.plist */,
 				7AE20BB3142B8D7E00848B40 /* ios_prefix.pch */,
+				95A2DDC8184C9D68007CE559 /* sample.pl */,
+				95A2DDCA184C9D76007CE559 /* sample.txt */,
 			);
 			path = os_ios_rsrc;
 			sourceTree = "<group>";
@@ -1421,7 +1427,9 @@
 				95E7A10B1841861C0063B0DA /* AcousticModelEnglish.bundle in Resources */,
 				7A8CAA27147FAC1600908FBE /* runtime in Resources */,
 				7A8CAA28147FAC2E00908FBE /* vimrc in Resources */,
+				95A2DDC9184C9D68007CE559 /* sample.pl in Resources */,
 				7A8CAA2C147FCFC900908FBE /* VimIcon57.png in Resources */,
+				95A2DDCB184C9D76007CE559 /* sample.txt in Resources */,
 				7A8CAA2D147FCFC900908FBE /* VimIcon72.png in Resources */,
 				95E7A10E1841861C0063B0DA /* vim.dic in Resources */,
 				7A8CAA2E147FCFC900908FBE /* VimIcon114.png in Resources */,

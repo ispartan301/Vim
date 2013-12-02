@@ -212,8 +212,9 @@ enum vim_state {
     NSLog(@"DEBUG: reco = %@", reco);
     
     if (reco != NULL) {
-        [self.navTitle setTitle:reco];
-        [self.fliteController say:reco withVoice:self.slt];
+        NSString *title = [hypothesis lowercaseString];
+        [self.navTitle setTitle:title];
+        [self.fliteController say:title withVoice:self.slt];
         NSString *cmd = [self.cmdHandler get:reco];
         NSLog(@"DEBUG: cmd = %@", cmd);
         if (gui_ios.vim_state == COMMAND) {
@@ -228,6 +229,8 @@ enum vim_state {
                 gui_ios.vim_state = COMMAND;
             }
         }
+    } else {
+        [self.navTitle setTitle:@"VoiceVim now listening"];
     }
 }
 
