@@ -36,18 +36,16 @@
 // the value you'd like to use.  The only exception to this is -hmm, which just needs to be uncommented since it's required 
 // that all hmm files are sought inside the bundle and there is no specific filename that is targeted (unlike in the case 
 // of the lm and dict files).
-
-
-
-
 //#define kADCDEV @"null" // -adcdev	Name of audio device to use for input, unused by OpenEars
 //#define kAGC @"null" // -agc	Automatic gain control for c0 ('max', 'emax', 'noise', or 'none'), defaults to none
 //#define kAGCTHRESH @"null" // -agcthresh	Initial threshold for automatic gain control, defaults to 2.0
 //#define kALPHA @"null" // -alpha	Preemphasis parameter, defaults to 0.97
 //#define kASCALE @"null" // -ascale	Inverse of acoustic model scale for confidence score calculation, defaults to 20.0
 //#define kBACKTRACE @"null" // -backtrace	Print results and backtraces to log file, defaults to no
-//#define kBEAM @"null" // -beam	Beam width applied to every frame in Viterbi search (smaller values mean wider beam), defaults to 1e-48
-//#define kBESTPATH @"yes" // -bestpath	Run bestpath (Dijkstra) search over word lattice (3rd pass), defaults to yes
+#if __LP64__ 
+#define kBEAM @"1e-96" // -beam	Beam width applied to every frame in Viterbi search (smaller values mean wider beam), defaults to 1e-48
+#endif
+#define kBESTPATH @"yes" // -bestpath	Run bestpath (Dijkstra) search over word lattice (3rd pass), defaults to yes
 //#define kBESTPATHLW @"null" // -bestpathlw	Language model probability weight for bestpath search, defaults to 9.5
 //#define kBGHIST @"null" // -bghist	Bigram-mode: If TRUE only one BP entry/frame; else one per LM state, defaults to no
 //#define kCEPLEN @"null" // -ceplen	Number of components in the input feature vector, defaults to 13
@@ -69,7 +67,9 @@
 //#define kFSGUSEALTPRON @"null" // -fsgusealtpron	Add alternate pronunciations to FSG, defaults to yes
 //#define kFSGUSEFILLER @"null" // -fsgusefiller	Insert filler words at each state., defaults to yes
 //#define kFWDFLAT @"null" // -fwdflat	Run forward flat-lexicon search over word lattice (2nd pass), defaults to yes
-//#define kFWDFLATBEAM @"null" // -fwdflatbeam	Beam width applied to every frame in second-pass flat search, defaults to 1e-64
+#if __LP64__ 
+#define kFWDFLATBEAM @"1e-128" // -fwdflatbeam	Beam width applied to every frame in second-pass flat search, defaults to 1e-64
+#endif
 //#define kFWDFLATWID @"null" // -fwdflatefwid	Minimum number of end frames for a word to be searched in fwdflat search, defaults to 4
 //#define kFWDFLATLW @"null" // -fwdflatlw	Language model probability weight for flat lexicon (2nd pass) decoding, defaults to 8.5
 //#define kFWDFLATSFWIN @"null" // -fwdflatsfwin	Window of frames in lattice to search for successor words in fwdflat search , defaults to 25
@@ -96,7 +96,7 @@
 //#define kLPBEAM @"null" // -lpbeam	Beam width applied to last phone in words, defaults to 1e-40
 //#define kLPONLYBEAM @"null" // -lponlybeam	Beam width applied to last phone in single-phone words, defaults to 7e-29
 //#define kLW @"null" // -lw	Language model probability weight, defaults to 6.5
-#define kMAXHMMPF @"3000" // -maxhmmpf	Maximum number of active HMMs to maintain at each frame (or -1 for no pruning), defaults to -1
+//#define kMAXHMMPF @"3000" // -maxhmmpf	Maximum number of active HMMs to maintain at each frame (or -1 for no pruning), defaults to -1
 //#define kMAXNEWOOV @"null" // -maxnewoov	Maximum new OOVs that can be added at run time, defaults to 20
 //#define kMAXWPF @"5" // -maxwpf	Maximum number of distinct word exits at each frame (or -1 for no pruning), defaults to -1
 //#define kMDEF @"null" // -mdef	Model definition input file

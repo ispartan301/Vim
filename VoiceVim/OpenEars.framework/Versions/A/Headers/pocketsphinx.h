@@ -45,6 +45,16 @@ extern "C" {
 }
 #endif
 
+#import <OpenEars/OpenEarsStaticAnalysisToggle.h>
+
+#ifdef SHOW64BITCOMPLAINTS
+#else
+#if __LP64__ // This is only significant for 64-bit compilations -- prefer to keep it limited.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshorten-64-to-32" // We are turning off warnings about 64 bit shortening because it isn't harming behavior, but it's reversible for troubleshooting. 
+#endif
+#endif
+
 /* System headers we need. */
 #include <stdio.h>
 
@@ -56,11 +66,11 @@ extern "C" {
 #include "ngram_model.h"
 
 /* PocketSphinx headers (not many of them!) */
-#include <pocketsphinx_export.h>
-#include <cmdln_macro.h>
-#include <ps_lattice.h>
-#include <ps_mllr.h>
-#include <fsg_set.h>
+#include "pocketsphinx_export.h"
+#include "cmdln_macro.h"
+#include "ps_lattice.h"
+#include "ps_mllr.h"
+#include "fsg_set.h"
 
 /**
  * PocketSphinx speech recognizer object.

@@ -47,7 +47,7 @@
 #include "ngram_model.h"
 
 /* PocketSphinx headers. */
-#include <pocketsphinx_export.h>
+#include "pocketsphinx_export.h"
 
 /**
  * Feature space linear transform object.

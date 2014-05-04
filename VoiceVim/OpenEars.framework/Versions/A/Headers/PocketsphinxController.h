@@ -21,6 +21,12 @@
 /**\cond HIDDEN_SYMBOLS*/   
 #import "ContinuousModel.h"
 #import "AudioConstants.h"
+#import "OpenEarsNotification.h"
+#import <UIKit/UIDevice.h>
+
+#define SYSTEM_VERSION_LESS_THAN(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+
 /**\endcond */   
 
 /**
@@ -59,6 +65,10 @@
     BOOL returnNullHypotheses;
     /**Set this to true in order to allow audio session mixing*/
     BOOL audioSessionMixing;
+    /**Check if the listening loop is suspended*/
+    BOOL isSuspended; 
+    /**Check if the listening loop is in progress*/
+    BOOL isListening;     
     /**
      If you are using 5.0 or greater, you can set audio modes for the audio session manager to use.
      This can be set to the following:
@@ -74,12 +84,19 @@
     NSString *audioMode; 
     /**By setting pathToTestFile to point to a recorded audio file you can run the main Pocketsphinx listening loop (not runRecognitionOnWavFileAtPath but the main loop invoked by using startListeningWithLanguageModelAtPath:) over a pre-recorded audio file instead of using it with live input. In contrast with using the method runRecognitionOnWavFileAtPath to receive a single recognition from a file, with this approach the audio file will have its buffers injected directly into the audio driver circular buffer for maximum fidelity to the goal of testing the entire codebase that is in use when doing a live recognition, including the whole driver, the calibration code, and the listening loop including all of its features. This is for creating tests for yourself and for sharing automatically replicable issue reports with Politepix. To use this, make an audio recording on the same device (i.e., if you are testing PocketsphinxController on an iPhone 5 with the internal microphone, make a recording on an iPhone 5 with the internal microphone, for instance using Apple's Voice Memos app) and then convert the resulting file to a 16-bit, 16000 sample rate, mono WAV file. You can do this with the output of Apple's Voice Memos app by taking the .m4a file that Voice Memos outputs and run it through this command in Terminal.app: "afconvert -f WAVE -d LEI16@16000 -c 1 ~/Desktop/Memo.m4a ~/Desktop/Memo.wav" Then add the WAV file to your app, and right before sending the call to startListeningWithLanguageModelAtPath, set this property pathToTestFile to the path to your audio file in your app as an NSString (e.g. [[NSBundle mainBundle] pathForResource:@"Memo" ofType:@"wav"]). Note: when you record the audio file you will be using to test with, <b>always</b> make sure to have 5 seconds of silence at the beginning so there is enough time for calibration to be performed on your recording environment, since calibration is also part of the test. SmartCMN is disabled during testing so that the test gets the same results when run for different people. Please keep in mind that there are some settings in Pocketsphinx which may prevent a deterministic outcome from a recognition, meaning that you should expect a <b>similar</b> score over multiple runs of a test but you may not always see the <b>identical</b> score. For this reason and the fact that PocketsphinxController is asynchronous and results in real practice are delivered via uncoupled callback it has not been designed as a purely automated test, but as an observed practical test. If it were designed as a purely automated test it would be testing something other than the way PocketsphinxController/OpenEarsEventsObserver works in an app, which is designed for good speech implementations rather than tests.*/
     NSString *pathToTestFile;
+    /**If you are using a test file, you can set playbackTestFileDuringTest to TRUE in order to hear the test file playing back out of the device as it is run. This is an early experimental version of this functionality, implemented as simply as possibly, and it might not work very well yet. It is unlikely to be perfectly synchronized with the actual engine head position in the test file, but it should be off by less than a quarter-second so you should be able to understand where you are in the recording when turning this on. There is a big warning when using this, which is that it will be emitted with an AVAudioPlayer, which means that if what you are testing also uses AVAudioPlayers or things which conflict with them, and/or you are reading AVAudioPlayer delegates for particular events, this setting is almost certainly incompatible with your test case and you should run your test file silently.*/
+    BOOL playbackTestFileDuringTest;
+    /**If you are doing testing, you can toggle SmartCMN on or off (it defaults to off and should usually be left off since using it can lead to nondeterministic results on the first runs with new devices).*/
+    BOOL useSmartCMNWithTestFiles;
 /**\cond HIDDEN_SYMBOLS*/ 
     BOOL processSpeechLocally;
     BOOL outputAudio;
     int sampleRate;
     BOOL stopping;
     NSDictionary *queuedStart;
+    BOOL micPermission;  
+    BOOL doNotWarnAboutPermissions;    
+    BOOL usingRejecto;
 /**\endcond*/     
 }
 
@@ -117,9 +134,14 @@
 // Run one synchronous recognition pass on a recording from its beginning to its end and stop.
 /**You can use this to run recognition on an already-recorded WAV file for testing. The WAV file has to be 16-bit and 16000 samples per second.*/
 - (void) runRecognitionOnWavFileAtPath:(NSString *)wavPath usingLanguageModelAtPath:(NSString *)languageModelPath dictionaryAtPath:(NSString *)dictionaryPath acousticModelAtPath:(NSString *)acousticModelPath languageModelIsJSGF:(BOOL)languageModelIsJSGF;
+/**You can use this to request mic permission in advance of running speech recognition.*/
+- (void) requestMicPermission;
+/**Returns whether your app has record permission. This is expected to be used after the user has at some point been prompted with requestMicPermission and the result has come back in the permission results OpenEarsEventsObserver delegate methods. If this is used before that point, accuracy of results are not guaranteed. If the user has either granted or denied permission in the past, this will return a boolean indicating the permission state.*/
+- (BOOL) micPermissionIsGranted;
 
 /**\cond HIDDEN_SYMBOLS*/ 
 @property (nonatomic, assign) BOOL stopping;
+@property (nonatomic, assign) BOOL micPermission;
 @property (nonatomic, retain) NSThread *voiceRecognitionThread; // The loop would lock if run on the main thread so it has a background thread in which it always runs.
 @property (nonatomic, retain) ContinuousModel *continuousModel; // The continuous model is the actual recognition loop.
 @property (nonatomic, retain) OpenEarsEventsObserver *openEarsEventsObserver; // We use an OpenEarsEventsObserver here to get important information from other objects which may be instantiated.
@@ -135,7 +157,12 @@
 @property (nonatomic, assign) int sampleRate;
 @property (nonatomic, retain) NSDictionary *queuedStart;
 @property (nonatomic, copy) NSString *pathToTestFile;
+@property (nonatomic, assign) BOOL playbackTestFileDuringTest;
+@property (nonatomic, assign) BOOL useSmartCMNWithTestFiles;
 @property (nonatomic, assign)BOOL audioSessionMixing;
 @property (nonatomic, copy) NSString *audioMode;
-
+@property (nonatomic, assign) BOOL isSuspended; 
+@property (nonatomic, assign) BOOL isListening;  
+@property (nonatomic, assign) BOOL doNotWarnAboutPermissions;
+@property (nonatomic, assign) BOOL usingRejecto;
 @end

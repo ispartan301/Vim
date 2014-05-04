@@ -51,7 +51,7 @@ extern "C" {
 #include "jsgf.h"
 
 /* PocketSphinx headers. */
-#include <pocketsphinx_export.h>
+#include "pocketsphinx_export.h"
 
 /**
  * Set of finite-state grammars used in decoding.

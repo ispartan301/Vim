@@ -100,8 +100,8 @@ typedef struct { // The audio device struct used by Pocketsphinx.
 	BOOL recognitionIsInProgress; // Is the recognition loop in effect?
 	BOOL audioQueueIsRunning; // Is the queue instantiated? 
 	BOOL recording; // Is the Audio Queue currently recording sound? 
-	SInt32 sps;		// Samples per second.
-	SInt32 bps;		// Bytes per sample.
+	SInt32 samplesPerSecond;		// Samples per second.
+	SInt32 bytesPerSample;		// Bytes per sample.
 	RingBuffer ringBuffer[kNumberOfChunksInRingbufferAudioQueue];
 	SInt16 indexOfLastWrittenChunk;
 	SInt16 indexOfChunkToRead;
@@ -122,8 +122,8 @@ typedef struct { // The audio device struct used by Pocketsphinx.
     SInt16 *testFileBuffer;
 } PocketsphinxAudioDevice;	
 
-
-void clear_buffers();
+CFStringRef getRoute(void);
+void clear_buffers(void);
 Float32 pocketsphinxAudioDeviceMeteringLevel(PocketsphinxAudioDevice * audioDriver); // Function which returns the metering level of the AudioQueue input.
 PocketsphinxAudioDevice *openAudioDevice (const char *audioDevice, SInt32 samplesPerSecond,BOOL takingBuffersFromTestFile, const char *testfileName); // Function to open the "audio device" or in this case instantiate a new Audio Queue.
 SInt32 startRecordingWithLeader(PocketsphinxAudioDevice * audioDevice); // An optional function that starts Audio Queue recording after a second and a half so that calibration can happen with full buffers.

@@ -144,8 +144,8 @@ FILE *fopen_compchk (const char *file,	/**< In: File to be opened */
  */
 SPHINXBASE_EXPORT
 FILE *_myfopen(const char *file, const char *mode,
-	       const char *pgm, int32 line);	/* In: __FILE__, __LINE__ from where called */
-#define myfopen(file,mode)	_myfopen((file),(mode),__FILE__,__LINE__)
+	       const char *pgm, int32 line);	/* In: OEFILEMACRO, OELINEMACRO from where called */
+#define myfopen(file,mode)	_myfopen((file),(mode),OEFILEMACRO,OELINEMACRO)
 
 
 /**

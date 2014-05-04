@@ -302,13 +302,13 @@ cont_ad_t *cont_ad_init_rawmode (PocketsphinxAudioDevice *ad,
  */
 SPHINXBASE_EXPORT
 int32 cont_ad_read (cont_ad_t *r,	/**< In: Object pointer returned by cont_ad_init */
-		    int16 *buf,		/**< In/Out: In block mode, contains input data.
-                                           On return, buf contains A/D data returned
-					   by this function, if any. */
-		    int32 max		/**< In: Maximum number of samples to be filled into buf.
-					   NOTE: max must be at least 256; otherwise
-					   the functions returns -1. */
-	);
+                    int16 *buf,		/**< In/Out: In block mode, contains input data.
+                                     On return, buf contains A/D data returned
+                                     by this function, if any. */
+                    int32 max		/**< In: Maximum number of samples to be filled into buf.
+                                     NOTE: max must be at least 256; otherwise
+                                     the functions returns -1. */
+);
 
 /**
  * Get the maximum number of samples which can be passed into cont_ad_read().

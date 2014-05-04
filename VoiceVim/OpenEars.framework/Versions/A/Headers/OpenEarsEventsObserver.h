@@ -93,11 +93,15 @@
 - (void) pocketSphinxContinuousSetupDidFail; 
 /** Your test recognition run has completed.*/
 - (void) testRecognitionCompleted;
+/** Pocketsphinx couldn't start because it has no mic permissions (will only be returned on iOS7 or later).*/
+- (void) pocketsphinxFailedNoMicPermissions;
+/** The user prompt to get mic permissions, or a check of the mic permissions, has completed with a TRUE or a FALSE result  (will only be returned on iOS7 or later).*/
+- (void) micPermissionCheckCompleted:(BOOL)result;
 
 // Flite Status Methods.
 /** Flite started speaking. You probably don't have to do anything about this.*/
 - (void) fliteDidStartSpeaking; 
 /** Flite finished speaking. You probably don't have to do anything about this.*/
 - (void) fliteDidFinishSpeaking; 
-	
+
 @end

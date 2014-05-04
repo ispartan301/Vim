@@ -47,6 +47,14 @@
 /* Win32/WinCE DLL gunk */
 #include "sphinxbase_export.h"
 
+#ifdef OEMAXILOGGING
+#define OEFILEMACRO __FILE__
+#define OELINEMACRO __LINE__
+#else
+#define OEFILEMACRO "file_omitted"
+#define OELINEMACRO 0
+#endif
+
 /**
  * @file err.h
  * @brief Implementation of logging routines. 
@@ -124,27 +132,27 @@ int err_set_logfile(char const *file);
 /**
  * Exit with non-zero status after error message 
  */
-#define E_FATAL  _E__pr_header(__FILE__, __LINE__, "FATAL_ERROR"),_E__die_error
+#define E_FATAL  _E__pr_header(OEFILEMACRO, OELINEMACRO, "FATAL_ERROR"),_E__die_error
 
 /**
  * Print error text; Call perror(""); exit(errno); 
  */
-#define E_FATAL_SYSTEM	_E__pr_header(__FILE__, __LINE__, "SYSTEM_ERROR"),_E__fatal_sys_error
+#define E_FATAL_SYSTEM	_E__pr_header(OEFILEMACRO, OELINEMACRO, "SYSTEM_ERROR"),_E__fatal_sys_error
 
 /**
  * Print error text; Call perror(""); 
  */
-#define E_WARN_SYSTEM	_E__pr_header(__FILE__, __LINE__, "SYSTEM_ERROR"),_E__sys_error
+#define E_WARN_SYSTEM	_E__pr_header(OEFILEMACRO, OELINEMACRO, "SYSTEM_ERROR"),_E__sys_error
 
 /**
  * Print error text; Call perror(""); 
  */
-#define E_ERROR_SYSTEM	_E__pr_header(__FILE__, __LINE__, "SYSTEM_ERROR"),_E__sys_error
+#define E_ERROR_SYSTEM	_E__pr_header(OEFILEMACRO, OELINEMACRO, "SYSTEM_ERROR"),_E__sys_error
 
 /**
  * Print logging information to standard error stream
  */
-#define E_INFO	  _E__pr_info_header(__FILE__, __LINE__, "INFO"),_E__pr_info
+#define E_INFO	  _E__pr_info_header(OEFILEMACRO, OELINEMACRO, "INFO"),_E__pr_info
 
 /**
  * Print logging information without header, to standard error stream
@@ -161,12 +169,12 @@ int err_set_logfile(char const *file);
 /**
  * Print warning information to standard error stream
  */
-#define E_WARN	  _E__pr_header(__FILE__, __LINE__, "WARNING"),_E__pr_warn
+#define E_WARN	  _E__pr_header(OEFILEMACRO, OELINEMACRO, "WARNING"),_E__pr_warn
 
 /**
  * Print error message to standard error stream
  */
-#define E_ERROR	  _E__pr_header(__FILE__, __LINE__, "ERROR"),_E__pr_warn
+#define E_ERROR	  _E__pr_header(OEFILEMACRO, OELINEMACRO, "ERROR"),_E__pr_warn
 
 /**
  * Set debugging verbosity level.
@@ -199,7 +207,7 @@ int err_get_debug_level(void);
 #ifdef SPHINX_DEBUG
 #define E_DEBUG(level,x) {                              \
         if (err_get_debug_level() >= level) {           \
-            _E__pr_header(__FILE__, __LINE__, "DEBUG"); \
+            _E__pr_header(OEFILEMACRO, OELINEMACRO, "DEBUG"); \
             _E__pr_info x;                              \
         }                                               \
     }

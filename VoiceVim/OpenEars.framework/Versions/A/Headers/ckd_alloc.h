@@ -92,7 +92,7 @@
 /* Win32/WinCE DLL gunk */
 #include "sphinxbase_export.h"
 #include "prim_type.h"
-
+#include "err.h"
 /** \file ckd_alloc.h
  *\brief Sphinx's memory allocation/deallocation routines. 
  * 
@@ -245,46 +245,46 @@ void ckd_free_4d(void *ptr);
 /**
  * Macro for __ckd_calloc__
  */
-#define ckd_calloc(n,sz)	__ckd_calloc__((n),(sz),__FILE__,__LINE__)
+#define ckd_calloc(n,sz)	__ckd_calloc__((n),(sz),OEFILEMACRO,OELINEMACRO)
 
 /**
  * Macro for __ckd_malloc__
  */
-#define ckd_malloc(sz)		__ckd_malloc__((sz),__FILE__,__LINE__)
+#define ckd_malloc(sz)		__ckd_malloc__((sz),OEFILEMACRO,OELINEMACRO)
 
 /**
  * Macro for __ckd_realloc__
  */
-#define ckd_realloc(ptr,sz)	__ckd_realloc__(ptr,(sz),__FILE__,__LINE__)
+#define ckd_realloc(ptr,sz)	__ckd_realloc__(ptr,(sz),OEFILEMACRO,OELINEMACRO)
 
 /**
  * Macro for __ckd_salloc__
  */
 
-#define ckd_salloc(ptr)		__ckd_salloc__(ptr,__FILE__,__LINE__)
+#define ckd_salloc(ptr)		__ckd_salloc__(ptr,OEFILEMACRO,OELINEMACRO)
 
 /**
  * Macro for __ckd_calloc_2d__
  */
 
-#define ckd_calloc_2d(d1,d2,sz)	__ckd_calloc_2d__((d1),(d2),(sz),__FILE__,__LINE__)
+#define ckd_calloc_2d(d1,d2,sz)	__ckd_calloc_2d__((d1),(d2),(sz),OEFILEMACRO,OELINEMACRO)
 
 /**
  * Macro for __ckd_calloc_3d__
  */
 
-#define ckd_calloc_3d(d1,d2,d3,sz) __ckd_calloc_3d__((d1),(d2),(d3),(sz),__FILE__,__LINE__)
+#define ckd_calloc_3d(d1,d2,d3,sz) __ckd_calloc_3d__((d1),(d2),(d3),(sz),OEFILEMACRO,OELINEMACRO)
 
 /**
  * Macro for __ckd_calloc_4d__
  */
-#define ckd_calloc_4d(d1, d2, d3, d4, s)  __ckd_calloc_4d__((d1), (d2), (d3), (d4), (s), __FILE__, __LINE__)
+#define ckd_calloc_4d(d1, d2, d3, d4, s)  __ckd_calloc_4d__((d1), (d2), (d3), (d4), (s), OEFILEMACRO, OELINEMACRO)
 
 /**
  * Macro for __ckd_alloc_2d_ptr__
  */
 
-#define ckd_alloc_2d_ptr(d1, d2, bf, sz)    __ckd_alloc_2d_ptr((d1), (d2), (bf), (sz), __FILE__, __LINE__)
+#define ckd_alloc_2d_ptr(d1, d2, bf, sz)    __ckd_alloc_2d_ptr((d1), (d2), (bf), (sz), OEFILEMACRO, OELINEMACRO)
 
 /**
  * Free only the pointer arrays allocated with ckd_alloc_2d_ptr().
@@ -295,7 +295,7 @@ void ckd_free_4d(void *ptr);
  * Macro for __ckd_alloc_3d_ptr__
  */
 
-#define ckd_alloc_3d_ptr(d1, d2, d3, bf, sz) __ckd_alloc_3d_ptr((d1), (d2), (d3), (bf), (sz), __FILE__, __LINE__)
+#define ckd_alloc_3d_ptr(d1, d2, d3, bf, sz) __ckd_alloc_3d_ptr((d1), (d2), (d3), (bf), (sz), OEFILEMACRO, OELINEMACRO)
 
 /**
  * Free only the pointer arrays allocated with ckd_alloc_3d_ptr().

@@ -40,7 +40,7 @@ typedef struct {
 	BOOL interruptionWasReceived;
 	BOOL reactivatingAfterInterruption;
 	AudioUnit audioUnit;
-	AudioStreamBasicDescription thruFormat;
+	AudioStreamBasicDescription audioUnitRecordFormat;
 	int16 deviceIsOpen;
 	int16 unitIsRunning;
 	CFStringRef currentRoute; // The current Audio Route for the device (e.g. headphone mic or external mic).
@@ -49,8 +49,8 @@ typedef struct {
 	BOOL recognitionIsInProgress; // Is the recognition loop in effect?
 	BOOL audioUnitIsRunning; // Is the unit instantiated? 
 	BOOL recording; // Is the Audio unit currently recording sound? 
-	SInt32 sps;		// Samples per second.
-	SInt32 bps;		// Bytes per sample.
+	SInt32 samplesPerSecond;		// Samples per second.
+	SInt32 bytesPerSample;		// Bytes per sample.
 	RingBuffer ringBuffer[kNumberOfChunksInRingbuffer]; // The ringbuffer
 	SInt16 indexOfLastWrittenChunk; // The index of the ringbuffer section that was last written to
 	SInt16 indexOfChunkToRead; // The index of the ringbuffer section that next needs reading
@@ -74,17 +74,17 @@ typedef struct {
 } PocketsphinxAudioDevice;
 
 void finalize_test(void);
-void clear_buffers();
+void clear_buffers(void);
+void setRoute(void);
+CFStringRef getRoute(void);
 Float32 pocketsphinxAudioDeviceMeteringLevel(PocketsphinxAudioDevice * audioDriver); // Returns the decibel level of mic input to controller classes
 PocketsphinxAudioDevice *openAudioDevice(const char *dev, int32 samples_per_sec, BOOL takingBuffersFromTestFile, const char *testfileName);
 int32 startRecording(PocketsphinxAudioDevice * audioDevice); // Starts the audio device
 int32 stopRecording(PocketsphinxAudioDevice * audioDevice); // Stops the audio device
 int32 closeAudioDevice(PocketsphinxAudioDevice * audioDevice); // Closes the audio device
 int32 readBufferContents(PocketsphinxAudioDevice * audioDevice, int16 * buffer, int32 maximum); // reads the buffer samples for speech data and silence data
-void setRoute(); // Sets the audio route as read from the audio session manager
 void getDecibels(SInt16 * samples, UInt32 inNumberFrames); // Reads the buffer samples and converts them to decibel readings
 int32 startAudioUnitWithRetries(int32 retries, AudioUnit audioUnit);
-
 
 
 #endif

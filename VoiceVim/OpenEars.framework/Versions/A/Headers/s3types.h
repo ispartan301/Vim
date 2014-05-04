@@ -82,7 +82,7 @@
 #define _S3_S3TYPES_H_
 
 #include <float.h>
-#include <assert.h>
+#import "oeassert.h"
 
 #include "prim_type.h"
 #include "err.h"

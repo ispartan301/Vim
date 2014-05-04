@@ -21,6 +21,7 @@
     NSString *pathToCachesDirectory;
     int verbosity;
     NSString *algorithmType;
+    NSNumber *ngrams;
 }
 
 - (void) runCMUCLMTKOnCorpusFile:(NSString *)fileName withDMP:(BOOL)withDMP;
@@ -30,5 +31,6 @@
 @property (nonatomic, copy) NSString *pathToCachesDirectory;
 @property (nonatomic, assign) int verbosity;
 @property (nonatomic, copy) NSString *algorithmType;
+@property (nonatomic, retain) NSNumber *ngrams;
 @end
 /**\endcond */
