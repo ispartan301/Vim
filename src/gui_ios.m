@@ -410,9 +410,19 @@ enum vim_state {
 
 #pragma mark UIViewController
 - (void)loadView {
-    self.view = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
+    self.view = [[[UIView alloc] initWithFrame:gui_ios.window.bounds] autorelease];
     self.view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+
+    //START_CONF
+    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+    if (UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) {
+        statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.width;
+    }
+    CGFloat statusBarOffset = (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) ? 0.0f : statusBarHeight;
+    //_textView = [[VimTextView alloc] initWithFrame:CGRectMake(0.0f, statusBarOffset, self.view.bounds.size.width, self.view.bounds.size.height - statusBarOffset)];
     _textView = [[VimTextView alloc] initWithFrame:CGRectMake(0.0f, 64.0f, 0.0f, 0.0f)];
+    //END_CONF
+
     _textView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     [self.view addSubview:_textView];
     [_textView release];
@@ -549,13 +559,31 @@ enum vim_state {
 - (void)keyboardWasShown:(NSNotification *)notification {
     CGRect keyboardRect = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGRect keyboardRectInView = [self.view.window convertRect:keyboardRect toView:_textView];
+
+    //START_CONF
+    /*
+    _textView.frame = CGRectMake(_textView.frame.origin.x,
+                                 _textView.frame.origin.y,
+                                 _textView.frame.size.width,
+                                 keyboardRectInView.origin.y);
+    */
     _textView.frame = CGRectMake(0.0f, 64.0f, _textView.frame.size.width, keyboardRectInView.origin.y);
+    //END_CONF
 }
 
 - (void)keyboardWillBeHidden:(NSNotification *)notification {
     CGRect keyboardRect = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGRect keyboardRectInView = [self.view.window convertRect:keyboardRect toView:_textView];
+
+    //START_CONF
+    /*
+    _textView.frame = CGRectMake(_textView.frame.origin.x,
+                                 _textView.frame.origin.y,
+                                 _textView.frame.size.width,
+                                 keyboardRectInView.origin.y);
+    */
     _textView.frame = CGRectMake(0.0f, 64.0f, _textView.frame.size.width, keyboardRectInView.origin.y);
+    //END_CONF
 }
 
 - (void)resizeShell {
@@ -599,8 +627,6 @@ enum vim_state {
 
 @end
 
-
-
 #pragma mark -
 #pragma mark VimAppDelegate
 
@@ -611,7 +637,7 @@ enum vim_state {
 @implementation VimAppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Per Apple's documentation : Performs the specified selector on the application's main thread during that thread's next run loop cycle.
-    gui_ios.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    gui_ios.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     gui_ios.view_controller = [[VimViewController alloc] init];
     gui_ios.window.rootViewController = gui_ios.view_controller;
     [gui_ios.view_controller release];
