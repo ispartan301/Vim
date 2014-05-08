@@ -1,7 +1,6 @@
 #JSGF V1.0;
 grammar vimgrammar;
-public <userCmd> = VIM <allCmd>;
-<allCmd> = <speChar> | <basicCmd> | <sampleCmd> | <modeCmd> | <setCmd> | <moveCmd> | <editCmd> | <exitCmd>;
+public <userCmd> = <speChar> | <basicCmd> | <sampleCmd> | <modeCmd> | <setCmd> | <moveCmd> | <editCmd> | <exitCmd>;
 
 <speChar> = COLON | DOLLOR | PERCENT | SLASH | BACKSLASH | CARET | EXCLAMATION;
 <basicCmd> = INSERT | ESCAPE | TOP | BOTTOM | VISUAL | SET | COPY | PASTE | CUT | SEARCH | REPLACE | EDIT | HELP | UNDO | REDO | NEXT | PREVIOUS | LEFT | RIGHT | UP | DOWN | SAVE | EXIT | OPEN;

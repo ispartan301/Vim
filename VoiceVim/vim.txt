@@ -1,3 +1,5 @@
+vim insert
+vim escape
 show me the keyboard
 show me keyboard
 show the keyboard
